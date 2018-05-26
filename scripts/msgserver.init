@@ -1,0 +1,56 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          wcdx-msgserver
+# Required-Start:    
+# Required-Stop:     
+# Should-Start:      $syslog $apache2 $named $time
+# Should-Stop:       $syslog $named $time
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Tiny messaging server
+# Description:       WEB/codeX messaging server used for realtime messaging between (web) applications
+### END INIT INFO
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+DAEMON=/usr/local/bin/wcdx-msgserver
+NAME="wcdx-msgserver"
+DESC="messaging server daemon"
+PIDFILE=/run/wcdx-msgserver.pid
+SERVER_SOCKET="/var/run/WCDXMsgServer"
+
+[ -x "$DAEMON" ] || exit 0
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        if $0 status > /dev/null ; then
+            log_success_msg "$NAME is already running"
+        else
+            log_daemon_msg "Starting $DESC" "$NAME"
+            start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE --exec $DAEMON --background
+	    chgrp 2000 $SERVER_SOCKET
+	    chmod 770 $SERVER_SOCKET
+	    log_end_msg $?
+        fi
+        ;;
+
+    stop)
+        log_daemon_msg "Stopping $DESC" "$NAME"
+        start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE --remove-pidfile --exec $DAEMON
+        log_end_msg $?
+        ;;
+
+    restart|force-reload)
+        $0 stop
+        $0 start
+        ;;
+
+    *)
+        log_action_msg "Usage: /etc/init.d/wcdx-msgserver {start|stop|restart|force-reload}"
+        exit 1
+        ;;
+esac
+
+exit 0

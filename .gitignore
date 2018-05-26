@@ -1,0 +1,12 @@
+.directory
+.kdev4
+CMakeCache.txt
+CMakeFiles/
+CMakeLists.txt.user
+Makefile
+cmake_install.cmake
+install_manifest.txt
+wcdx-msgserver
+wcdx-msgserver-new.kdev4
+wcdx-msgserver.unittest
+*.so
